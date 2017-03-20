@@ -1,6 +1,6 @@
 ---
 title: "Mini-Project 2"
-author: "Your Name Here"
+author: "Junzhou (Jane) Liu, Yvonne Niyonzima, Duanyue (Nancy) Yun"
 date: "March 24, 2017"
 output: html_document
 ---
