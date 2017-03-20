@@ -56,7 +56,7 @@ plot <- ggplot(data = Sjoined_party, aes(x = year, y = transaction_amt)) +
 ```
 
 
-###to be looked at later
+###to be looked at later.
 ```{r}
 ##From above, we are going to get rid of all the party that received $0.00 contributions in the six years. We then  look how much each party received in the year. This data can be used to see if there exists a lint between the amount received and the number of seats won.
 zz <- Sjoined %>%
