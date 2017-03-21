@@ -1,6 +1,10 @@
 ---
 title: "Mini-Project 2"
+<<<<<<< HEAD
 author: "Yvonne Niyonzima, Duanyue Yun, Junzhou Liu"
+=======
+author: "Junzhou (Jane) Liu, Yvonne Niyonzima, Duanyue (Nancy) Yun"
+>>>>>>> 392d2d7afe00f967873e797bb04a8df25941785d
 date: "March 24, 2017"
 output: html_document
 ---
