@@ -1,0 +1,55 @@
+```{r,include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(tidyr)
+```
+
+```{r,include=FALSE}
+load("house_elections.rda")
+load("candidates.rda")
+load("committees.rda")
+load("contributions.rda")
+```
+
+```{r}
+# Select meaningful columns
+contributions <- select(contributions, cand_id, transaction_amt)
+candidates <- candidates %>%
+  select(cand_id, cand_name, cand_election_yr)
+```
+```{r}
+# Join candidates and contributions by "cand_id"
+t2 <- candidates %>%
+  left_join(contributions, by = "cand_id")
+```
+```{r}
+# Eliminate rows where transaction_amt is "NA"
+t2 <- t2 %>%
+  filter(!is.na(transaction_amt))
+```
+
+```{r}
+# Filter the years that we want to compare
+p2<-filter(t2, cand_election_yr == "2008"|
+           cand_election_yr == "2010" |
+           cand_election_yr == "2012"|
+           cand_election_yr == "2014"|
+           cand_election_yr == "2016")
+```
+```{r}
+# Create a function to calculate average contribution received by candidates in that year
+ave_contribution <- function(year_arg) {
+  p2 %>%
+  filter(cand_election_yr == year_arg) %>%
+  group_by(cand_name) %>%
+  summarise(contribution = sum(transaction_amt)) %>%
+  summarise(ave = sum(contribution) / n())
+}
+```
+
+```{r}
+# Create a vector of the relevant years and use lapply to calculate average contribution for all the years
+year <- c("2008", "2010", "2012", "2014", "2016")
+p3 <- lapply(year, FUN = ave_contribution) %>% bind_rows()
+```
