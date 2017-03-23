@@ -5,7 +5,6 @@ date: "March 24, 2017"
 output: html_document
 ---
 
-
 #Our goal was to create a code that can inform us the amount of money contributed to a party (demorats, independents, and republicans) in the senatorial races during elections years (this data can be used to study whether or not there exists a correlation between the amount contributed and the number of seats won).
 
 ```{r,  include=FALSE}
