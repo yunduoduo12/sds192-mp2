@@ -1,0 +1,70 @@
+---
+title: "Mini-Project 2"
+author: "Yvonne Niyonzima, Duanyue Yun, Junzhou Liu"
+date: "March 24, 2017"
+output: html_document
+---
+
+
+## Loading the data
+
+```{r,  include=FALSE}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(tidyr)
+
+```
+
+
+```{r, include=FALSE}
+load("house_elections.rda")
+load("candidates.rda")
+load("committees.rda")
+load("contributions.rda")
+```
+
+
+```{r}
+
+#we first join the  data of contributiions and candidates by the "candidate id"
+joined <- candidates %>%
+  full_join(contributions, by = "cand_id")
+##We chose only candidates who are seeking their state senate seats in the years between 2010 and 2016 using the verb "filter". We also use select to have only the variables that we need. 
+Sjoined <- joined %>%
+  filter(cand_election_yr >= 2012 & cand_office == "S"  ) %>%
+  select(cand_id, cand_party_affiliation, cand_election_yr, cand_ici, cand_state, transaction_amt) ##%>%
+  
+##we want to replace all the na with the 0
+Sjoined[is.na(Sjoined)] <- 0
+
+#we only choose the twomajor parties (dems and republicans), but we also add independents. We only did these three because they received most contributions.
+Sjoined_party <- filter(Sjoined,cand_party_affiliation == "REP" | cand_party_affiliation =="DEM" | cand_party_affiliation == "IND"  )
+
+
+theyear2012 <- filter(Sjoined_party, cand_election_yr == "2012")
+
+
+plot <- ggplot(data = Sjoined_party, aes(x = year, y = transaction_amt)) +
+  geom_bar(aes(color =cand_party_affiliation ))
+
+##summary2 <- Sjoined %>%
+  group_by(cand_party_affiliation) %>%
+  summarize(amount = sum(transaction_amt))  #This codes will show us the amount each party received.
+
+
+```
+
+
+
+```{r}
+summary2012 <- theyear2012 %>%
+  group_by(cand_party_affiliation) %>%
+  summarize(amount = sum(transaction_amt))  #This codes will show us the amount each party received.
+
+  plot <- ggplot(data = summary2012, aes(x = cand_party_affiliation, y = amount, fill=cand_party_affiliation)) +
+  geom_bar(stat = "identity", aes())+
+    scale_fill_manual(values = c("blue", "green", "red"))
+plot
+```
+
