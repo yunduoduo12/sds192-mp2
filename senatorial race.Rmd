@@ -6,7 +6,7 @@ output: html_document
 ---
 
 
-##Our goal was to create a code that can inform us the amount of money contributed to a party (demorats, independents, and republicans) in the senatorial races during elections years (this data can be used to study whether or not there exists a correlation between the amount contributed and the number of seats won).
+#Our goal was to create a code that can inform us the amount of money contributed to a party (demorats, independents, and republicans) in the senatorial races during elections years (this data can be used to study whether or not there exists a correlation between the amount contributed and the number of seats won).
 
 ```{r,  include=FALSE}
 library(dplyr)
@@ -53,7 +53,8 @@ summary2012 <- theyear2012 %>%
 
 ```
 
-##The visual is a bar graph of the year 2012. As it can be seen, the republican received more money than both democrats and independents combined.
+#The visual is a bar graph of the year 2012. As it can be seen, the republican received more money than both democrats and independents combined.
+
 ```{r}
 plot
 ```
