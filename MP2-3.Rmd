@@ -1,0 +1,106 @@
+---
+title: "Mini_Project 2"
+author: "Duanyue Yun, Junzhou Liu, Yvonne Niyonzima" 
+date: "3/19/2017"
+output: html_document
+---
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(tidyr)
+```
+
+```{r}
+load("candidates.rda")
+load("contributions.rda")
+```
+
+```{r}
+# We dealt with contributions and candidates tables.
+# Select meaningful columns & filter transaction type "24E" as we are interested in independent expenditures spent on advocating election of candidate
+contributions <- contributions %>%
+  select(cand_id, transaction_amt, transaction_type) %>%
+  filter(transaction_type == "24E")
+candidates <- candidates %>%
+  select(cand_id, cand_name, cand_office, cand_election_yr, cand_party_affiliation) 
+```
+
+```{r}
+# Join candidates and contributions by "cand_id"
+t1 <- candidates %>%
+  left_join(contributions, by = "cand_id")
+```
+
+```{r}
+# Eliminate rows where transaction_amt is "NA"
+t1 <- t1 %>% 
+  filter(!is.na(transaction_amt)) 
+```
+
+```{r}
+# Filter election year 2012 as the vast majority of observations belong to 2012
+t1 <- t1 %>%
+  filter(cand_election_yr == "2012")
+```
+
+```{r}
+# Calculate the average contribution received by each candidate
+t2 <- t1 %>%
+  group_by(cand_name) %>%
+  summarise(ave_contribution = mean(transaction_amt))
+```
+
+```{r}
+# Rejoin with the initial table and select meaningful columns and filter the unique rows
+t3 <- t1 %>%
+  full_join(t2, by = "cand_name")
+t3 <- t3 %>% 
+  select(cand_name, cand_office, cand_party_affiliation, ave_contribution) %>%
+  unique()
+```
+
+```{r}
+# Create a function to calculate average contribution received by candidates from a particular party running for different offices in 2012 
+ave_contribution <- function(party_arg) {
+  t3 %>%
+  filter(cand_party_affiliation == party_arg) %>%
+  group_by(cand_office) %>%
+  summarise(ave = sum(ave_contribution) / n())
+}
+```
+
+```{r}
+# Apply the function to the 2 major parties: Democratic and Republic
+party <- c("DEM", "REP")
+t4 <- lapply(party, FUN = ave_contribution) %>% bind_rows()
+```
+
+```{r}
+# Add the party column back to the table
+t4$party <- c("DEM", "DEM", "DEM", "REP", "REP", "REP")
+```
+
+# One sentence description
+The bar chart shows that on average Republican candidates received more independent contributions than Democrats in the election year 2012 for all 3 types of candidate offices, but the difference is the most obvious for Presidential election.
+
+# Blogpost
+The huge difference between the average contribution received by Democrat candidates and that by Republican candidates for Presidential elections is particularly intriguing. Filtering the data reveals that the only presidential candidate from Democratic Party in 2012 is then incumbent President Obama. Thus we infer that compared to Republican candidates, donations for Obama's campaign came from big companies and organizations instead of these independent sources. There is also data showing that the top donors for Obama include Microsoft and Google. [https://www.opensecrets.org/pres12/contrib.php?cycle=2012&id=n00009638]
+```{r, warning=FALSE}
+# Plot a  bar graph to compare the average contribution received by candidates from the 2 parties for the 3 types of candidate offices
+p <- ggplot(t4, aes(x=cand_office, y=ave, fill=party)) +
+    geom_bar(stat="identity", position=position_dodge()) + ylab("average contribution") + scale_fill_manual(values=c("#0000FF", "#FF0000")) + xlab("candidate office") + scale_x_discrete(labels=c("House", "President", "Senate"))
+p
+```
+
+
+
+
+
+
+
+
+
+
+  
